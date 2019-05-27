@@ -1,6 +1,6 @@
+<!DOCTYPE html>
 <html lang="en">
     <head>
-        <!DOCTYPE html>
         <script src="{{base_url}}static/jquery/jquery-latest.min.js"></script>
         <script src="{{base_url}}static/semantic/semantic.min.js"></script>
         <script src="{{base_url}}static/jquery/tablesort.js"></script>
@@ -665,7 +665,7 @@
                 <div class="ui dividing header">Updates</div>
                 <div class="twelve wide column">
                     <div class="ui grid">
-                        <div class="middle aligned row">
+                        <div class="middle aligned row" id="div_branch">
                             <div class="right aligned four wide column">
                                 <label>Branch</label>
                             </div>
@@ -698,6 +698,28 @@
                             <div class="collapsed column">
                                 <div class="collapsed center aligned column">
                                     <div class="ui basic icon" data-tooltip="Automatically download and install updates. You will still be able to install from System: Tasks" data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>Restart after update</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="settings_update_restart" class="ui toggle checkbox"
+                                     data-update-restart={{settings.general.getboolean('update_restart')}}>
+                                    <input name="settings_general_update_restart" type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon"
+                                         data-tooltip="Automatically restart after download and install updates. You will still be able to restart manualy"
+                                         data-inverted="">
                                         <i class="help circle large icon"></i>
                                     </div>
                                 </div>
@@ -1378,6 +1400,25 @@
 
                         <div class="middle aligned row">
                             <div class="right aligned four wide column">
+                                <label>Ignore embedded PGS subtitles</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="settings_ignore_pgs" class="ui toggle checkbox" data-ignorepgs={{settings.general.getboolean('ignore_pgs_subs')}}>
+                                    <input name="settings_general_ignore_pgs" type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Ignores pgs subtitles in embedded subtitles detection. Only relevant if 'Use embedded subtitles' is enabled." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
                                 <label>Adaptive searching</label>
                             </div>
                             <div class="one wide column">
@@ -1500,7 +1541,7 @@
                                 <div class='field'>
                                     <div class="ui fluid input">
                                         <input id="settings_death_by_captcha_password" name="settings_death_by_captcha_password"
-                                               type="text" value="{{ settings.deathbycaptcha.password }}">
+                                               type="password" value="{{ settings.deathbycaptcha.password }}">
                                     </div>
                                 </div>
                             </div>
@@ -1662,6 +1703,28 @@
 
                         <div class="middle aligned row">
                             <div class="right aligned four wide column">
+                                <label>Nekur</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="nekur" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Latvian subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="nekur_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
                                 <label>LegendasTV</label>
                             </div>
                             <div class="one wide column">
@@ -1721,6 +1784,54 @@
                         </div>
                         <div id="napiprojekt_option" class="ui grid container">
 
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>Napisy24</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="napisy24" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Polish subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="napisy24_option" class="ui grid container">
+                            <div class="middle aligned row">
+                                <div class="right aligned six wide column">
+                                    <label>Username</label>
+                                </div>
+                                <div class="six wide column">
+                                    <div class="ui fluid input">
+                                        <input name="settings_napisy24_username" type="text" value="{{settings.napisy24.username if settings.napisy24.username != None else ''}}">
+                                    </div>
+                                </div>
+                                <div class="collapsed column">
+                                    <div class="collapsed center aligned column">
+                                        <div data-tooltip="The provided credentials must have api access. Leave empty to use the defaults." data-inverted="" class="ui basic icon">
+                                            <i class="yellow warning circle large icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="middle aligned row">
+                                <div class="right aligned six wide column">
+                                    <label>Password</label>
+                                </div>
+                                <div class="six wide column">
+                                    <div class="ui fluid input">
+                                        <input name="settings_napisy24_password" type="password" value="{{settings.napisy24.password if settings.napisy24.password != None else ''}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="middle aligned row">
@@ -1823,6 +1934,28 @@
                             </div>
                         </div>
                         <div id="podnapisi_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>Subdivx</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="subdivx" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Spanish subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="subdivx_option" class="ui grid container">
 
                         </div>
 
@@ -1941,6 +2074,28 @@
                             </div>
                         </div>
                         <div id="subs4series_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>subtitri.id.lv</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="subtitriid" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Latvian subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="subtitriid_option" class="ui grid container">
 
                         </div>
 
@@ -2339,8 +2494,11 @@
     });
 
     % from get_args import args
+
     % if args.no_update:
     $("#div_update").hide();
+    % elif args.release_update:
+    $("#div_branch").hide();
     % end
     % import sys
     % if sys.platform.startswith('win'):
@@ -2377,6 +2535,12 @@
             } else {
                 $("#settings_automatic_div").checkbox('uncheck');
             }
+
+    if ($('#settings_update_restart').data("update-restart") === "True") {
+        $("#settings_update_restart").checkbox('check');
+    } else {
+        $("#settings_update_restart").checkbox('uncheck');
+    }
 
     if ($('#settings_debug').data("debug") === "True") {
                 $("#settings_debug").checkbox('check');
@@ -2418,6 +2582,12 @@
                 $("#settings_embedded").checkbox('check');
             } else {
                 $("#settings_embedded").checkbox('uncheck');
+            }
+
+    if ($('#settings_ignore_pgs').data("ignorepgs") === "True") {
+                $("#settings_ignore_pgs").checkbox('check');
+            } else {
+                $("#settings_ignore_pgs").checkbox('uncheck');
             }
 
     if ($('#settings_only_monitored_sonarr').data("monitored") === "True") {

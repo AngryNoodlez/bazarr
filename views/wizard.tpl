@@ -1,6 +1,6 @@
+<!DOCTYPE html>
 <html lang="en">
     <head>
-        <!DOCTYPE html>
         <script src="{{base_url}}static/jquery/jquery-latest.min.js"></script>
         <script src="{{base_url}}static/semantic/semantic.min.js"></script>
         <script src="{{base_url}}static/jquery/tablesort.js"></script>
@@ -563,6 +563,28 @@
 
                         <div class="middle aligned row">
                             <div class="right aligned four wide column">
+                                <label>Nekur</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="nekur" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Latvian subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="nekur_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
                                 <label>LegendasTV</label>
                             </div>
                             <div class="one wide column">
@@ -622,6 +644,54 @@
                         </div>
                         <div id="napiprojekt_option" class="ui grid container">
 
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>Napisy24</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="napisy24" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Polish subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="napisy24_option" class="ui grid container">
+                            <div class="middle aligned row">
+                                <div class="right aligned six wide column">
+                                    <label>Username</label>
+                                </div>
+                                <div class="six wide column">
+                                    <div class="ui fluid input">
+                                        <input name="settings_napisy24_username" type="text" value="{{settings.napisy24.username if settings.napisy24.username != None else ''}}">
+                                    </div>
+                                </div>
+                                <div class="collapsed column">
+                                    <div class="collapsed center aligned column">
+                                        <div data-tooltip="The provided credentials must have api access. Leave empty to use the defaults." data-inverted="" class="ui basic icon">
+                                            <i class="yellow warning circle large icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="middle aligned row">
+                                <div class="right aligned six wide column">
+                                    <label>Password</label>
+                                </div>
+                                <div class="six wide column">
+                                    <div class="ui fluid input">
+                                        <input name="settings_napisy24_password" type="password" value="{{settings.napisy24.password if settings.napisy24.password != None else ''}}">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="middle aligned row">
@@ -724,6 +794,28 @@
                             </div>
                         </div>
                         <div id="podnapisi_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>Subdivx</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="subdivx" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Spanish subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="subdivx_option" class="ui grid container">
 
                         </div>
 
@@ -842,6 +934,28 @@
                             </div>
                         </div>
                         <div id="subs4series_option" class="ui grid container">
+
+                        </div>
+
+                        <div class="middle aligned row">
+                            <div class="right aligned four wide column">
+                                <label>subtitri.id.lv</label>
+                            </div>
+                            <div class="one wide column">
+                                <div id="subtitriid" class="ui toggle checkbox provider">
+                                    <input type="checkbox">
+                                    <label></label>
+                                </div>
+                            </div>
+                            <div class="collapsed column">
+                                <div class="collapsed center aligned column">
+                                    <div class="ui basic icon" data-tooltip="Latvian subtitles provider." data-inverted="">
+                                        <i class="help circle large icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="subtitriid_option" class="ui grid container">
 
                         </div>
 
