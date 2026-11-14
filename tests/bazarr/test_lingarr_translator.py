@@ -1,3 +1,5 @@
+import pytest
+
 from bazarr.subtitles.tools.translate.services import lingarr_translator
 
 
@@ -76,3 +78,69 @@ def test_lingarr_request_sends_sonarr_episode_id_for_episodes(mocker, tmp_path):
     payload = post.call_args.kwargs["json"]
     assert payload["mediaType"] == "Episode"
     assert payload["arrMediaId"] == 42
+
+
+def _patch_lingarr_responses(mocker, responses):
+    """Patch the Lingarr POST to return or raise each item in order and disable retry sleeps."""
+    mocker.patch.object(lingarr_translator, "get_title", return_value="Synthetic title")
+    mocker.patch.object(lingarr_translator.settings.translator, "lingarr_url", "http://lingarr:9876", create=True)
+    mocker.patch.object(lingarr_translator.settings.translator, "lingarr_token", "", create=True)
+    mocker.patch("time.sleep")
+    return mocker.patch.object(lingarr_translator.requests, "post", side_effect=responses)
+
+
+def _response(status_code, json_body=None):
+    response = type("R", (), {})()
+    response.status_code = status_code
+    response.text = ""
+    response.json = lambda: json_body
+    return response
+
+
+def test_lingarr_server_error_is_not_resubmitted(mocker, tmp_path):
+    """A 5xx after a long run must fail once instead of re-sending the whole file."""
+    from deep_translator.exceptions import RequestError
+
+    service = _build_service(tmp_path)
+    post = _patch_lingarr_responses(mocker, [_response(500)] * 3)
+
+    with pytest.raises(RequestError):
+        service._translate_content(["Hello", "Goodbye"], job_id="job-1")
+
+    assert post.call_count == 1
+
+
+def test_lingarr_timeout_is_not_resubmitted(mocker, tmp_path):
+    """A read timeout must fail once instead of re-sending the whole file."""
+    from deep_translator.exceptions import RequestError
+
+    service = _build_service(tmp_path)
+    post = _patch_lingarr_responses(mocker, [lingarr_translator.requests.exceptions.ReadTimeout()] * 3)
+
+    with pytest.raises(RequestError):
+        service._translate_content(["Hello"], job_id="job-1")
+
+    assert post.call_count == 1
+
+
+def test_lingarr_connection_error_is_retried(mocker, tmp_path):
+    """A connection error means the request never reached Lingarr, so it is retried."""
+    service = _build_service(tmp_path)
+    translated = [{"position": 0, "line": "Bonjour"}]
+    post = _patch_lingarr_responses(
+        mocker,
+        [lingarr_translator.requests.exceptions.ConnectionError(), _response(200, translated)],
+    )
+
+    assert service._translate_content(["Hello"], job_id="job-1") == translated
+    assert post.call_count == 2
+
+
+def test_lingarr_rate_limit_is_retried(mocker, tmp_path):
+    """A 429 means Lingarr rejected the request without processing it, so it is retried."""
+    service = _build_service(tmp_path)
+    translated = [{"position": 0, "line": "Bonjour"}]
+    post = _patch_lingarr_responses(mocker, [_response(429), _response(200, translated)])
+
+    assert service._translate_content(["Hello"], job_id="job-1") == translated
+    assert post.call_count == 2

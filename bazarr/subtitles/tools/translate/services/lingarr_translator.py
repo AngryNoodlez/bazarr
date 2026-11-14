@@ -107,7 +107,10 @@ class LingarrTranslatorService:
             jobs_queue.update_job_progress(job_id=job_id, progress_message=f'Lingarr translation failed: {str(e)}')
             raise
 
-    @retry(exceptions=(TooManyRequests, RequestError, requests.exceptions.RequestException), tries=3, delay=1,
+    # Only retry failures where Lingarr did not accept the request: rate limiting (429) and connection
+    # errors. A 5xx or a timeout can happen after Lingarr has already spent a long time translating the
+    # file, so re-sending the whole payload would duplicate that work and leave orphaned jobs on Lingarr.
+    @retry(exceptions=(TooManyRequests, requests.exceptions.ConnectionError), tries=3, delay=1,
            backoff=2, jitter=(0, 1))
     def _translate_content(self, lines_list, job_id):
         try:
@@ -195,12 +198,12 @@ class LingarrTranslatorService:
             raise RequestError("Request timed out")
         except requests.exceptions.ConnectionError:
             logger.error(f'Lingarr API connection error for {self.source_srt_file}')
-            raise RequestError("Connection error")
+            raise
         except requests.exceptions.RequestException as e:
             logger.error(f'Lingarr API request failed for {self.source_srt_file}: {str(e)}')
             raise
         except (TooManyRequests, RequestError) as e:
-            logger.error(f'Lingarr API error after retries for {self.source_srt_file}: {str(e)}')
+            logger.error(f'Lingarr API error for {self.source_srt_file}: {str(e)}')
             jobs_queue.update_job_progress(job_id=job_id, progress_message=f'Lingarr API error: {str(e)}')
             raise
         except Exception as e:
