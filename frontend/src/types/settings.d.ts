@@ -193,6 +193,7 @@ declare namespace Settings {
     gemini_batch_size: number;
     lingarr_url: string;
     lingarr_token: string;
+    lingarr_timeout: number;
     openai_base_url: string;
     openai_model: string;
     openai_api_key: string;

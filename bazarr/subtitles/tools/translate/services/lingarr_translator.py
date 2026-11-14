@@ -230,8 +230,8 @@ class LingarrTranslatorService:
                 f"{settings.translator.lingarr_url}/api/translate/content",
                 json=payload,
                 headers=headers,
-                timeout=1920  # increase timeout to 32 minutes to give time to Lingarr timeout (30 minutes) to occur
-                # and get reported to Bazarr instead of silently failing.
+                timeout=settings.translator.lingarr_timeout  # default 1920 (32 minutes) leaves time for the Lingarr
+                # timeout (30 minutes) to occur and get reported to Bazarr instead of silently failing.
             )
             executor.shutdown(wait=False)
             response = self._wait_for_response(future, job_id, display_title, headers)

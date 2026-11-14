@@ -214,6 +214,7 @@ validators = [
     Validator('translator.translator_type', must_exist=True, default='google_translate', is_type_of=str, cast=str),
     Validator('translator.lingarr_url', must_exist=True, default='http://lingarr:9876', is_type_of=str),
     Validator('translator.lingarr_token', must_exist=True, default='', is_type_of=str, cast=str),
+    Validator('translator.lingarr_timeout', must_exist=True, default=1920, is_type_of=int, gte=1),
     Validator('translator.openai_base_url', must_exist=True, default='', is_type_of=str, cast=str),
     Validator('translator.openai_model', must_exist=True, default='', is_type_of=str, cast=str),
     Validator('translator.openai_api_key', must_exist=True, default='', is_type_of=str, cast=str),

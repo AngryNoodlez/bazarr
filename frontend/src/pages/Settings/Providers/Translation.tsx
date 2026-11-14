@@ -138,6 +138,15 @@ const SettingsProvidersTranslationView: FunctionComponent = () => {
             Optional API key for authentication. Leave empty if your Lingarr
             instance doesn't require authentication.
           </Message>
+          <Number
+            label="Request timeout (seconds)"
+            settingKey="settings-translator-lingarr_timeout"
+            min={1}
+          />
+          <Message>
+            Maximum time Bazarr waits for Lingarr to translate a whole subtitle
+            file. Increase it for slow models; the default is 1920 (32 minutes).
+          </Message>
         </CollapseBox>
         <CollapseBox
           settingKey="settings-translator-translator_type"

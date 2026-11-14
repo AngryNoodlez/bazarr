@@ -118,6 +118,7 @@ def test_lingarr_cancel_while_request_in_flight_cancels_remote_request(mocker, t
     mocker.patch.object(lingarr_translator, "get_title", return_value="Synthetic title")
     mocker.patch.object(lingarr_translator.settings.translator, "lingarr_url", "http://lingarr:9876", create=True)
     mocker.patch.object(lingarr_translator.settings.translator, "lingarr_token", "", create=True)
+    mocker.patch.object(lingarr_translator.settings.translator, "lingarr_timeout", 1920, create=True)
     post = mocker.patch.object(lingarr_translator.requests, "post", side_effect=fake_post)
     mocker.patch.object(lingarr_translator.requests, "get", side_effect=fake_get)
 

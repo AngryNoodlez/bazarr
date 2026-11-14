@@ -144,3 +144,14 @@ def test_lingarr_rate_limit_is_retried(mocker, tmp_path):
 
     assert service._translate_content(["Hello"], job_id="job-1") == translated
     assert post.call_count == 2
+
+
+def test_lingarr_request_uses_configured_timeout(mocker, tmp_path):
+    """The content POST must use the timeout from settings instead of a hard-coded value."""
+    service = _build_service(tmp_path)
+    post = _patch_lingarr_responses(mocker, [_response(200, [{"position": 0, "line": "Bonjour"}])])
+    mocker.patch.object(lingarr_translator.settings.translator, "lingarr_timeout", 600, create=True)
+
+    service._translate_content(["Hello"], job_id="job-1")
+
+    assert post.call_args.kwargs["timeout"] == 600
