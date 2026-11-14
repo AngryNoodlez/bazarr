@@ -306,7 +306,7 @@ class JobsQueue:
         :return: Returns True if the job's progress was successfully updated, otherwise False.
         :rtype: bool
         """
-        for job in self.jobs_running_queue:
+        for job in list(self.jobs_running_queue):
             if job.job_id == job_id:
                 payload = self._build_progress_payload(job, progress_value, progress_max, progress_message)
                 event_stream(type='jobs', action='update', payload=payload)
@@ -362,7 +362,7 @@ class JobsQueue:
         :return: Returns True if the job's progress status was successfully updated, otherwise False.
         :rtype: bool
         """
-        for job in self.jobs_running_queue:
+        for job in list(self.jobs_running_queue):
             if job.job_id == job_id:
                 job.is_progress = is_progress
                 event_stream(type='jobs', action='update', payload={"job_id": job.job_id})
@@ -587,11 +587,46 @@ class JobsQueue:
 
         :raises JobCanceled: If the job was canceled by a user
         """
-        for job in self.jobs_running_queue:
+        # Iterate a snapshot: the job runner appends and removes running jobs from other threads, and
+        # iterating the live deque while it changes raises RuntimeError.
+        for job in list(self.jobs_running_queue):
             if job.job_id == job_id:
+                if not job.is_cancellable:
+                    logging.debug(f"Job {job.job_name} ({job.job_id}) does not support cancellation")
+                    return False
                 job.cancel_event.set()
                 logging.debug(f"Cancellation requested for job {job.job_name} ({job.job_id})")
+                return True
         return False
+
+    def is_cancel_requested(self, job_id: int | None) -> bool:
+        """
+        Reports whether a user has requested cancellation of a running job.
+
+        :param job_id: The identifier of the running job, or None when the work is not part of a queued job.
+        :type job_id: int | None
+        :return: True if the job is in the running queue and its cancel event is set, otherwise False.
+        :rtype: bool
+        """
+        if job_id is None:
+            return False
+        job = self.get_job(job_id)
+        return job is not None and job.cancel_event.is_set()
+
+    def raise_if_cancel_requested(self, job_id: int | None) -> None:
+        """
+        Raises JobCanceled when a user has requested cancellation of a running job.
+
+        Long-running work calls this at safe points (between batches or requests) so that a cancelled job
+        stops without writing partial output.
+
+        :param job_id: The identifier of the running job, or None when the work is not part of a queued job.
+        :type job_id: int | None
+        :raises JobCanceled: If cancellation was requested for the job.
+        :rtype: None
+        """
+        if self.is_cancel_requested(job_id):
+            raise JobCanceled()
 
     def get_job(self, job_id: int | None) -> Job | None:
         """
@@ -607,7 +642,8 @@ class JobsQueue:
         :return: The job object if found in the running queue, None otherwise.
         :rtype: Job | None
         """
-        for job in self.jobs_running_queue:
+        # Iterate a snapshot so concurrent appends and removals from the job runner cannot break the lookup.
+        for job in list(self.jobs_running_queue):
             if job.job_id == job_id:
                 return job
         return None
@@ -646,7 +682,7 @@ class JobsQueue:
             if len(self.jobs_running_queue) >= settings.general.concurrent_jobs:
                 return None
 
-            running_syncs = sum(1 for job in self.jobs_running_queue if job.is_sync)
+            running_syncs = sum(1 for job in list(self.jobs_running_queue) if job.is_sync)
             can_run_sync = running_syncs < settings.subsync.concurrent_syncs
 
             for job in self.jobs_pending_queue:

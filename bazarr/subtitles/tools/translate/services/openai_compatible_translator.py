@@ -13,7 +13,7 @@ import requests
 from retry.api import retry
 
 from app.config import settings
-from app.jobs_queue import jobs_queue
+from app.jobs_queue import jobs_queue, JobCanceled
 from languages.get_languages import language_from_alpha2, language_from_alpha3
 from radarr.history import history_log_movie
 from sonarr.history import history_log
@@ -321,6 +321,7 @@ class OpenAICompatibleTranslatorService:
             jobs_queue.update_job_progress(job_id=job_id, progress_max=len(lines) or 1,
                                            progress_message=self.source_srt_file)
             for start in range(0, len(lines), batch_size):
+                jobs_queue.raise_if_cancel_requested(job_id)
                 indices = lines[start:start + batch_size]
                 translated = self._translate_batch([cues[i] for i in indices])
                 for index, text in zip(indices, translated):
@@ -342,6 +343,10 @@ class OpenAICompatibleTranslatorService:
                 history_log_movie(action=6, radarr_id=self.radarr_id, result=result)
             jobs_queue.update_job_progress(job_id=job_id, progress_value='max')
             return self.dest_srt_file
+        except JobCanceled:
+            logger.info(f'BAZARR canceled OpenAI-compatible translation for {self.source_srt_file}')
+            jobs_queue.update_job_progress(job_id=job_id, progress_message='OpenAI-compatible translation canceled')
+            raise
         except Exception as e:
             logger.error(f'BAZARR encountered an error during OpenAI-compatible translation for '
                          f'{self.source_srt_file}: {str(e)}')

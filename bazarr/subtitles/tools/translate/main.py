@@ -11,7 +11,7 @@ from .core.translator_utils import validate_translation_params, convert_language
 from .services.translator_factory import TranslatorFactory
 from languages.get_languages import alpha3_from_alpha2
 from app.config import settings
-from app.jobs_queue import jobs_queue
+from app.jobs_queue import jobs_queue, JobCanceled
 from utilities.helper import get_target_folder
 
 
@@ -23,7 +23,7 @@ def extract_and_translate_embedded(subtitles_id, media_type, video_path, from_la
     # no other local variable can exist yet.
     if not job_id:
         jobs_queue.add_job_from_function(f'Extracting and translating from {from_lang.upper()} to '
-                                         f'{to_lang.upper()}', is_progress=True)
+                                         f'{to_lang.upper()}', is_progress=True, is_cancellable=True)
         return
 
     from subtitles.embedded import extract_embedded_subtitle
@@ -46,7 +46,7 @@ def translate_subtitles_file(video_path, source_srt_file, from_lang, to_lang, fo
     if not job_id:
         jobs_queue.add_job_from_function(f'Translating from {from_lang.upper()} to {to_lang.upper()} using '
                                          f'{settings.translator.translator_type.replace("_", " ").title()}',
-                                         is_progress=True)
+                                         is_progress=True, is_cancellable=True)
         return
 
     try:
@@ -117,6 +117,10 @@ def translate_subtitles_file(video_path, source_srt_file, from_lang, to_lang, fo
             postprocess_subtitles(dest_srt_file, media_type, metadata,
                                   sonarr_episode_id if media_type == 'episode' else radarr_id)
         return result
+
+    except JobCanceled:
+        logging.info(f'Translation canceled by user: {source_srt_file}')
+        raise
 
     except Exception as e:
         logging.error(f'Translation failed: {str(e)}', exc_info=True)
