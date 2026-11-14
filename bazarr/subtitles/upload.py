@@ -148,6 +148,7 @@ def manual_upload_subtitle(path, language, forced, hi, media_type, subtitle, fil
                                          [sub],
                                          single=single,
                                          tags=None,  # fixme
+                                         m49_language_tag=settings.general.use_m49_language_tag,
                                          directory=get_target_folder(path),
                                          chmod=chmod,
                                          formats=sub_format if use_original_format else ("srt",),

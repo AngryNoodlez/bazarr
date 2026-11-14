@@ -286,6 +286,7 @@ def generate_subtitles(path, languages, audio_language, sceneName, title, media_
                             saved_subtitles = save_subtitles(video.original_path, subtitles,
                                                              single=settings.general.single_language,
                                                              tags=None,  # fixme
+                                                             m49_language_tag=settings.general.use_m49_language_tag,
                                                              directory=fld,
                                                              chmod=chmod,
                                                              formats=subtitle_formats,

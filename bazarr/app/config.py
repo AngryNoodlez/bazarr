@@ -134,6 +134,7 @@ validators = [
     Validator('general.use_embedded_subs', must_exist=True, default=True, is_type_of=bool),
     Validator('general.embedded_subs_show_desired', must_exist=True, default=True, is_type_of=bool),
     Validator('general.utf8_encode', must_exist=True, default=True, is_type_of=bool),
+    Validator('general.use_m49_language_tag', must_exist=True, default=False, is_type_of=bool),
     Validator('general.ignore_pgs_subs', must_exist=True, default=False, is_type_of=bool),
     Validator('general.ignore_vobsub_subs', must_exist=True, default=False, is_type_of=bool),
     Validator('general.ignore_ass_subs', must_exist=True, default=False, is_type_of=bool),

@@ -71,7 +71,8 @@ def translate_subtitles_file(video_path, source_srt_file, from_lang, to_lang, fo
             language=lang_obj if isinstance(lang_obj, Language) else lang_obj.subzero_language(),
             extension=dest_extension,
             forced_tag=forced,
-            hi_tag=hi
+            hi_tag=hi,
+            m49_language_tag=settings.general.use_m49_language_tag,
         )
 
         # get the real destination path taking into account if the user set up Bazarr to store external subtitles in

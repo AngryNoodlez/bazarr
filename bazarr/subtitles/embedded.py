@@ -190,7 +190,8 @@ def extract_embedded_subtitle(subtitles_id, media_type, job_id=None, filename_su
                                        language=language,
                                        extension=f".{extension}",
                                        forced_tag=data.forced,
-                                       hi_tag=data.hi)
+                                       hi_tag=data.hi,
+                                       m49_language_tag=settings.general.use_m49_language_tag)
     target_folder = get_target_folder(video_path)
     if target_folder:
         subtitles_path = os.path.join(target_folder, os.path.basename(subtitles_path))
